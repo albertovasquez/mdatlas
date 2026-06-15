@@ -30,6 +30,7 @@ export function setup() {
   const scrollPositions = new Map();
   const serverDown      = ref(false);
   const showShortcuts   = ref(false);
+  const shareLoading    = ref(false);
 
   const isDirty      = computed(() => fileContent.value !== originalContent.value);
   const renderedHtml = computed(() => {
@@ -190,6 +191,29 @@ export function setup() {
     if (file) openFile(file);
   }
 
+  async function shareToHereNow() {
+    if (!selectedFile.value || shareLoading.value) return;
+    shareLoading.value = true;
+    try {
+      const res = await apiFetch('/api/share/herenow', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          content: fileContent.value,
+          title: selectedFile.value.name.replace(/\.md$/i, ''),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      navigator.clipboard.writeText(data.url);
+      showToast(`Share link copied to clipboard: ${data.url}`);
+    } catch (e) {
+      showToast('Share failed: ' + e.message, 'danger');
+    } finally {
+      shareLoading.value = false;
+    }
+  }
+
   const onGlobalKey = e => {
     if ((e.metaKey || e.ctrlKey) && e.key === 's') {
       e.preventDefault();
@@ -236,6 +260,6 @@ export function setup() {
     tree, rootPath, selectedFile, fileContent, editMode,
     isDirty, isDark, sidebarOpen, loading, loadingFile, saving, toast, serverDown,
     authReady, authError,
-    renderedHtml, editorContainer, loadTree, openFile, saveFile, toggleTheme, onAfterEnter, startResize, showShortcuts,
+    renderedHtml, editorContainer, loadTree, openFile, saveFile, shareToHereNow, shareLoading, toggleTheme, onAfterEnter, startResize, showShortcuts,
   };
 }

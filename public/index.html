@@ -162,6 +162,16 @@
                   {{ saving ? 'Saving…' : 'Save' }}
                 </button>
 
+                <button v-if="selectedFile"
+                  class="btn btn-secondary"
+                  @click="shareToHereNow"
+                  :disabled="shareLoading"
+                  title="Share to here.now">
+                  <span v-if="shareLoading" class="spinner-border spinner-border-sm me-1"></span>
+                  <i v-else class="ti ti-share-2 me-1"></i>
+                  {{ shareLoading ? 'Sharing…' : 'Share' }}
+                </button>
+
               </div>
             </div>
           </div>
