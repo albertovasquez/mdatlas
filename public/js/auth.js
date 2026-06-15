@@ -6,7 +6,11 @@ export async function initAuth() {
 
   if (urlToken && await _ping(urlToken)) {
     _token = urlToken;
-    sessionStorage.setItem('md-token', urlToken);
+    // Persist in localStorage (survives tab close / reopen) rather than
+    // sessionStorage (per-tab, cleared on close). Since the token is also
+    // stripped from the URL below, sessionStorage made the app unusable on the
+    // next visit to the now-tokenless URL — empty tree + 401s on every /api call.
+    localStorage.setItem('md-token', urlToken);
     params.delete('token');
     const clean = window.location.pathname +
       (params.toString() ? '?' + params : '') +
@@ -15,13 +19,13 @@ export async function initAuth() {
     return { ready: true, error: false };
   }
 
-  const stored = sessionStorage.getItem('md-token');
+  const stored = localStorage.getItem('md-token');
   if (stored && await _ping(stored)) {
     _token = stored;
     return { ready: true, error: false };
   }
 
-  sessionStorage.removeItem('md-token');
+  localStorage.removeItem('md-token');
   return { ready: false, error: true };
 }
 
