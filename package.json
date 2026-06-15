@@ -2,10 +2,19 @@
   "name": "mdatlas",
   "version": "1.0.0",
   "description": "Local markdown browser and editor. Browse and edit .md files via a zero-dependency Node.js server",
-  "keywords": ["markdown", "browser", "editor", "viewer", "cli", "local"],
+  "keywords": [
+    "markdown",
+    "browser",
+    "editor",
+    "viewer",
+    "cli",
+    "local"
+  ],
   "license": "MIT",
   "type": "module",
-  "bin": { "mdatlas": "./server.js" },
+  "bin": {
+    "mdatlas": "./server.js"
+  },
   "files": [
     "server.js",
     "src/",
@@ -15,9 +24,14 @@
     "type": "git",
     "url": "https://github.com/ramireznoy/mdatlas"
   },
-  "engines": { "node": ">=18.0.0" },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "start": "node server.js",
     "test": "node --test test/auth.test.js test/fs.test.js test/router.test.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
   }
 }
