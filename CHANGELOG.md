@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [2.1.0] - 2026-06-16
+
+### Added
+- File tree follows symlinks to directories and `.md` files (broken links are skipped)
+
+### Changed
+- `guardPath` uses `path.relative` for traversal checks (same behavior, clearer intent)
+
 ## [2.0.0] - 2026-04-29
 
 ### Added

@@ -8,7 +8,7 @@ Modern projects accumulate a lot of markdown: architecture decision records, mod
 
 AI coding assistants have made this even more relevant. Tools like Claude Code, Copilot, and Cursor read your markdown to understand context, your `CLAUDE.md` files, your `ARCHITECTURE.md`, your per-package READMEs. The quality of that documentation directly affects the quality of the code they help you write. But editing raw markdown files one at a time through a file tree or a terminal is friction that makes it easy to skip.
 
-`mdatlas` removes that friction. Point it at your repo root and you get a clean, browsable interface to all your markdown files, across every package, every service, every layer of your monorepo, in your browser, in seconds, with no install and no config. Edit any file in place and save. Use it as your documentation hub while you work, or leave it running alongside your AI assistant so your context docs are always one tab away.
+`mdatlas` removes that friction. Point it at your repo root and you get a clean, browsable interface to all your markdown files, across every package, every service, every layer of your monorepo, in your browser, in seconds, with no install and no config. Edit any file in place and save. Symlinks to directories and `.md` files are followed, so you can surface docs from elsewhere (e.g. `.claude/agents/`) without duplicating them. Use it as your documentation hub while you work, or leave it running alongside your AI assistant so your context docs are always one tab away.
 
 ---
 
