@@ -1,6 +1,6 @@
 import { describe, it, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile, rm } from 'node:fs/promises';
+import { mkdir, writeFile, rm, symlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { buildTree, guardPath } from '../src/fs.js';
@@ -20,6 +20,10 @@ before(async () => {
   await writeFile(join(root, '.hidden.md'),      'hidden');
   await writeFile(join(root, 'docs', 'guide.md'), '# Guide');
   await writeFile(join(root, 'docs', 'api.md'),   '# API');
+  await mkdir(join(root, 'linked'), { recursive: true });
+  await writeFile(join(root, 'linked', 'agent.md'), '# Agent');
+  await symlink(join(root, 'linked'), join(root, 'agents'), 'dir');
+  await symlink(join(root, 'intro.md'), join(root, 'welcome.md'));
 });
 
 after(() => rm(root, { recursive: true, force: true }));
@@ -51,7 +55,7 @@ describe('buildTree', () => {
   it('includes .md files at the root level', async () => {
     const tree = await buildTree(root, root);
     const names = tree.filter(n => n.type === 'file').map(n => n.name).sort();
-    assert.deepEqual(names, ['intro.md', 'notes.md']);
+    assert.deepEqual(names, ['intro.md', 'notes.md', 'welcome.md']);
   });
 
   it('excludes non-markdown files', async () => {
@@ -104,5 +108,20 @@ describe('buildTree', () => {
 
   it('returns an empty array for a non-existent directory', async () => {
     assert.deepEqual(await buildTree('/no/such/path', '/no/such/path'), []);
+  });
+
+  it('follows directory symlinks', async () => {
+    const tree = await buildTree(root, root);
+    const agents = tree.find(n => n.name === 'agents');
+    assert.ok(agents, 'agents symlink directory should be present');
+    assert.deepEqual(agents.children.map(f => f.name), ['agent.md']);
+    assert.equal(agents.children[0].path, join('agents', 'agent.md'));
+  });
+
+  it('follows file symlinks to markdown files', async () => {
+    const tree = await buildTree(root, root);
+    const welcome = tree.find(n => n.name === 'welcome.md');
+    assert.ok(welcome, 'welcome.md symlink should be present');
+    assert.equal(welcome.path, 'welcome.md');
   });
 });
